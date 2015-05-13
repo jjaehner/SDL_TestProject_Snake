@@ -22,18 +22,18 @@ int main(int argc, char** argv)
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP);
 	TTF_Init();
 
-	_windowPtr = SDL_CreateWindow("SDL Window", 400, 400, 400, 400, 0);
+	_windowPtr = SDL_CreateWindow("SDL Window", 100, 100, 1280, 720, 0);
 	_rendererPtr = SDL_CreateRenderer(_windowPtr, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 	SDL_Surface* _bunnyImgPtr = IMG_Load("fuzzy_bunny.jpg");
 	SDL_Texture* _bunnyTexturePtr = SDL_CreateTextureFromSurface(_rendererPtr, _bunnyImgPtr);
-	SDL_SetWindowSize(_windowPtr, _bunnyImgPtr->w, _bunnyImgPtr->h);
+	//SDL_SetWindowSize(_windowPtr, _bunnyImgPtr->w, _bunnyImgPtr->h);
 	SDL_Rect _bunnyRect = { 0, 0, _bunnyImgPtr->w, _bunnyImgPtr->h };
 
-	TTF_Font* _arial = TTF_OpenFont("arial.ttf", 24);
-	SDL_Color _ttfColor = { 255, 0, 0 };
-	SDL_Surface* _ttfSurfacePtr = TTF_RenderText_Solid(_arial, "Hello World!", _ttfColor);
-	SDL_Texture* _ttfTexturePtr = SDL_CreateTextureFromSurface(_rendererPtr, _ttfSurfacePtr);
+	//TTF_Font* _arial = TTF_OpenFont("arial.ttf", 24);
+	//SDL_Color _ttfColor = { 255, 0, 0 };
+	//SDL_Surface* _ttfSurfacePtr = TTF_RenderText_Solid(_arial, "Hello World!", _ttfColor);
+	//SDL_Texture* _ttfTexturePtr = SDL_CreateTextureFromSurface(_rendererPtr, _ttfSurfacePtr);
 	SDL_Rect _ttfRect = { 0, 0, 0, 0 };
 
 	SnakeObject* snakeObj = new SnakeObject(_rendererPtr);
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 		SDL_Event evt;
 		SDL_PollEvent(&evt);
 
-		snakeObj->update(gameTimer.getDeltaTime());
+		snakeObj->update(gameTimer.getDeltaTimeInSeconds());
 
 		if (evt.type == SDL_KEYDOWN)
 		{
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
 		SDL_RenderClear(_rendererPtr);
 		snakeObj->render(_rendererPtr);
 		//SDL_RenderCopy(_rendererPtr, _bunnyTexturePtr, &_bunnyRect, nullptr);
-		SDL_RenderCopy(_rendererPtr, _ttfTexturePtr, nullptr, nullptr);
+		//SDL_RenderCopy(_rendererPtr, _ttfTexturePtr, nullptr, nullptr);
 		SDL_RenderPresent(_rendererPtr);
 		sprintf(fpsChars, "%f", gameTimer.getFps());
 		SDL_SetWindowTitle(_windowPtr, fpsChars);

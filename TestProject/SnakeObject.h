@@ -1,10 +1,11 @@
 #pragma once
 #include "TextureObject.h"
+#include "Timer.h"
 #include <SDL.h>
 #include <vector>
 
 enum MovementDirection { NORTH, SOUTH, EAST, WEST };
-#define MovementSpeed 35.0f
+#define MovementSpeed 64.0f
 
 class SnakeObject
 {
@@ -20,4 +21,5 @@ private:
 
 	std::vector<TextureObject*> _bodyObjects;
 	MovementDirection _currentDirection;
+	Timer* _movementTimer;
 };

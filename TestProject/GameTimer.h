@@ -1,20 +1,16 @@
 #pragma once
-class GameTimer
+#include "Timer.h"
+
+class GameTimer : public Timer
 {
 public:
 	GameTimer();
 	~GameTimer();
 	float getFps();
-	float getDeltaTime();
 	void update();
 
 private:
 	
-	unsigned long _lastTickCount;
-	unsigned int _deltaTicks;
 	float _frameRate;
-	float _deltaSeconds;
-	float _elapsedTimeInSeconds;
 	float _frameCheckFrequencyInSeconds;
 };
-
