@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP);
 	TTF_Init();
 
-	_windowPtr = SDL_CreateWindow("SDL Window", 100, 100, 1280, 720, 0);
+	_windowPtr = SDL_CreateWindow("SDL Window", 100, 100, 660, 660, 0);
 	_rendererPtr = SDL_CreateRenderer(_windowPtr, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 	SDL_Surface* _bunnyImgPtr = IMG_Load("fuzzy_bunny.jpg");
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 
 		SDL_SetRenderDrawColor(_rendererPtr, 100, 149, 237, 255);
 		SDL_RenderClear(_rendererPtr);
-		snakeObj->render(_rendererPtr);
+		snakeObj->render();
 		//SDL_RenderCopy(_rendererPtr, _bunnyTexturePtr, &_bunnyRect, nullptr);
 		//SDL_RenderCopy(_rendererPtr, _ttfTexturePtr, nullptr, nullptr);
 		SDL_RenderPresent(_rendererPtr);

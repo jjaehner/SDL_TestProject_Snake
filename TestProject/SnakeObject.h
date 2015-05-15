@@ -1,25 +1,27 @@
 #pragma once
-#include "TextureObject.h"
+#include "SnakeBodyPiece.h"
 #include "Timer.h"
 #include <SDL.h>
 #include <vector>
-
-enum MovementDirection { NORTH, SOUTH, EAST, WEST };
-#define MovementSpeed 64.0f
 
 class SnakeObject
 {
 public:
 	SnakeObject(SDL_Renderer* renderer);
 	~SnakeObject();
+	void createSnake();
+	void destroySnake();
 	void update(float deltaSeconds);
-	void render(SDL_Renderer* renderer);
-
+	void render();
+	void addBodyLink(Uint32 linkCount);
 	void changeDirection(MovementDirection movementDirection);
 
 private:
 
-	std::vector<TextureObject*> _bodyObjects;
-	MovementDirection _currentDirection;
+	std::vector<SnakeBodyPiece*> _bodyObjects;
 	Timer* _movementTimer;
+	SDL_Renderer* _renderer;
+	Uint32 _gridLocationX;
+	Uint32 _gridLocationY;
+	Uint32 _bodyPartAddDelay = 0;
 };

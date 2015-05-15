@@ -7,7 +7,6 @@ GameTimer::GameTimer()
 	_deltaTicks = 0;
 	_elapsedTimeInSeconds = 0;
 	_deltaSeconds = 0.0f;
-	_lastTickCount = SDL_GetTicks();
 	start();
 }
 

@@ -82,6 +82,8 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Pickup.cpp" />
+    <ClCompile Include="SnakeBodyPiece.cpp" />
     <ClCompile Include="SnakeObject.cpp" />
     <ClCompile Include="TextureObject.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -107,6 +109,8 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="MathUtils.h" />
+    <ClInclude Include="Pickup.h" />
+    <ClInclude Include="SnakeBodyPiece.h" />
     <ClInclude Include="SnakeObject.h" />
     <ClInclude Include="TextureObject.h" />
     <ClInclude Include="Timer.h" />

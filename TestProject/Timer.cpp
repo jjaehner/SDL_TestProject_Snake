@@ -4,6 +4,7 @@
 Timer::Timer()
 {
 	_isRunning = false;
+	_lastTickCount = SDL_GetTicks();
 }
 
 

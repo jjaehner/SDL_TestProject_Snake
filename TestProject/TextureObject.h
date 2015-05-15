@@ -15,11 +15,15 @@ public:
 
 	void setPosition(Vector2D newPosition);
 	Vector2D getPosition();
+	SDL_Rect getCollisionRect();
+	bool intersectsTextureObject(TextureObject* textureObject);
+
 
 private:
 
 	SDL_Texture* _texturePtr;
 	SDL_Surface* _surfacePtr;
 	SDL_Rect _destRect;
+	bool pointIsInside(float x, float y);
 };
 
