@@ -20,8 +20,10 @@ private:
 
 	std::vector<SnakeBodyPiece*> _bodyObjects;
 	Timer* _movementTimer;
+	Timer* _animationTimer;
 	SDL_Renderer* _renderer;
 	Uint32 _gridLocationX;
 	Uint32 _gridLocationY;
+	Uint32 _currentAnimationFrame;
 	Uint32 _bodyPartAddDelay = 0;
 };

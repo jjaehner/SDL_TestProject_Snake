@@ -5,6 +5,7 @@
 #include <SDL_ttf.h>
 #include <iostream>
 #include <time.h>
+#include <iostream>
 #include "GameTimer.h"
 #include "SnakeObject.h"
 #define _TEST_INCLUDES_H
@@ -25,15 +26,6 @@ int main(int argc, char** argv)
 	_windowPtr = SDL_CreateWindow("SDL Window", 100, 100, 660, 660, 0);
 	_rendererPtr = SDL_CreateRenderer(_windowPtr, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-	SDL_Surface* _bunnyImgPtr = IMG_Load("fuzzy_bunny.jpg");
-	SDL_Texture* _bunnyTexturePtr = SDL_CreateTextureFromSurface(_rendererPtr, _bunnyImgPtr);
-	//SDL_SetWindowSize(_windowPtr, _bunnyImgPtr->w, _bunnyImgPtr->h);
-	SDL_Rect _bunnyRect = { 0, 0, _bunnyImgPtr->w, _bunnyImgPtr->h };
-
-	//TTF_Font* _arial = TTF_OpenFont("arial.ttf", 24);
-	//SDL_Color _ttfColor = { 255, 0, 0 };
-	//SDL_Surface* _ttfSurfacePtr = TTF_RenderText_Solid(_arial, "Hello World!", _ttfColor);
-	//SDL_Texture* _ttfTexturePtr = SDL_CreateTextureFromSurface(_rendererPtr, _ttfSurfacePtr);
 	SDL_Rect _ttfRect = { 0, 0, 0, 0 };
 
 	SnakeObject* snakeObj = new SnakeObject(_rendererPtr);
@@ -57,16 +49,16 @@ int main(int argc, char** argv)
 			switch (evt.key.keysym.sym)
 			{
 			case SDLK_w:
-				snakeObj->changeDirection(NORTH);
+				snakeObj->changeDirection(MovementDirection::NORTH);
 				break;
 			case SDLK_a:
-				snakeObj->changeDirection(WEST);
+				snakeObj->changeDirection(MovementDirection::WEST);
 				break;
 			case SDLK_s:
-				snakeObj->changeDirection(SOUTH);
+				snakeObj->changeDirection(MovementDirection::SOUTH);
 				break;
 			case SDLK_d:
-				snakeObj->changeDirection(EAST);
+				snakeObj->changeDirection(MovementDirection::EAST);
 				break;
 			default:
 				break;
@@ -89,7 +81,6 @@ int main(int argc, char** argv)
 	
 	delete snakeObj;
 
-	SDL_DestroyTexture(_bunnyTexturePtr);
 	SDL_DestroyRenderer(_rendererPtr);
 	_rendererPtr = nullptr;
 	SDL_DestroyWindow(_windowPtr);

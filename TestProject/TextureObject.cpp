@@ -22,7 +22,7 @@ TextureObject::~TextureObject()
 void TextureObject::update(float deltaSeconds)
 {
 	_destRect.x = this->_position.x;
-	_destRect.y= this->_position.y;
+	_destRect.y = this->_position.y;
 }
 
 void TextureObject::setPosition(Vector2D newPosition)
@@ -35,7 +35,7 @@ Vector2D TextureObject::getPosition()
 	return this->_position;
 }
 
-SDL_Rect TextureObject::getCollisionRect()
+SDL_Rect TextureObject::getDestinationRect()
 {
 	return _destRect;
 }
@@ -52,10 +52,10 @@ bool TextureObject::intersectsTextureObject(TextureObject* textureObject)
 	bool bottomLeftOfObjectCollides = false;
 	bool bottomRightOfObjectCollides = false;
 
-	float textureObjectCollisionLeft = textureObject->getCollisionRect().x;
-	float textureObjectCollisionTop = textureObject->getCollisionRect().y;
-	float textureObjectCollisionRight = textureObject->getCollisionRect().x + textureObject->getCollisionRect().w;
-	float textureObjectCollisionBottom = textureObject->getCollisionRect().y + textureObject->getCollisionRect().h;
+	float textureObjectCollisionLeft = textureObject->getDestinationRect().x;
+	float textureObjectCollisionTop = textureObject->getDestinationRect().y;
+	float textureObjectCollisionRight = textureObject->getDestinationRect().x + textureObject->getDestinationRect().w;
+	float textureObjectCollisionBottom = textureObject->getDestinationRect().y + textureObject->getDestinationRect().h;
 	
 	if (pointIsInside(textureObjectCollisionLeft, textureObjectCollisionTop))
 	{
@@ -87,10 +87,10 @@ bool TextureObject::intersectsTextureObject(TextureObject* textureObject)
 
 bool TextureObject::pointIsInside(float x, float y)
 {
-	float collisionLeft = getCollisionRect().x;
-	float collisionTop = getCollisionRect().y;
-	float collisionRight = getCollisionRect().x + getCollisionRect().w;
-	float collisionBottom = getCollisionRect().y + getCollisionRect().h;
+	float collisionLeft = getDestinationRect().x;
+	float collisionTop = getDestinationRect().y;
+	float collisionRight = getDestinationRect().x + getDestinationRect().w;
+	float collisionBottom = getDestinationRect().y + getDestinationRect().h;
 		
 	if (collisionLeft <= x && collisionRight >= x)
 	{

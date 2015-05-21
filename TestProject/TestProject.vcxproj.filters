@@ -41,9 +41,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="fuzzy_bunny.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="Body.png">
       <Filter>Resource Files</Filter>
     </Image>

@@ -1,23 +1,9 @@
-﻿Build started 5/15/2015 10:03:27 AM.
+﻿Build started 5/21/2015 9:41:49 AM.
      1>Project "F:\Android Workspace\GitHub\SDL_TestProject_Snake\TestProject\TestProject.vcxproj" on node 2 (Build target(s)).
-     1>ClCompile:
-         E:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt SnakeObject.cpp
-         SnakeObject.cpp
-     1>f:\android workspace\github\sdl_testproject_snake\testproject\snakeobject.cpp(73): warning C4018: '<' : signed/unsigned mismatch
-     1>f:\android workspace\github\sdl_testproject_snake\testproject\snakeobject.cpp(105): warning C4018: '<' : signed/unsigned mismatch
-     1>f:\android workspace\github\sdl_testproject_snake\testproject\snakeobject.cpp(149): warning C4018: '<' : signed/unsigned mismatch
-       Link:
-         E:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Android Workspace\GitHub\SDL_TestProject_Snake\Debug\TestProject.exe" /INCREMENTAL /NOLOGO SDL2.lib SDL2main.lib SDL2test.lib SDL2_Image.lib SDL2_ttf.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\Android Workspace\GitHub\SDL_TestProject_Snake\Debug\TestProject.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Android Workspace\GitHub\SDL_TestProject_Snake\Debug\TestProject.lib" /MACHINE:X86 Debug\GameObject.obj
-         Debug\GameTimer.obj
-         Debug\main.obj
-         Debug\Pickup.obj
-         Debug\SnakeBodyPiece.obj
-         Debug\SnakeObject.obj
-         Debug\TextureObject.obj
-         Debug\Timer.obj
+     1>Link:
          TestProject.vcxproj -> F:\Android Workspace\GitHub\SDL_TestProject_Snake\Debug\TestProject.exe
      1>Done Building Project "F:\Android Workspace\GitHub\SDL_TestProject_Snake\TestProject\TestProject.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.50
+Time Elapsed 00:00:00.04

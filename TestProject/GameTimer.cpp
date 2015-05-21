@@ -3,7 +3,7 @@
 
 GameTimer::GameTimer()
 {
-	_frameCheckFrequencyInSeconds = 0.25f;
+	_frameCheckFrequencyInSeconds = SecondsBetweenFPSCheck;
 	_deltaTicks = 0;
 	_elapsedTimeInSeconds = 0;
 	_deltaSeconds = 0.0f;
@@ -24,8 +24,8 @@ float GameTimer::getFps()
 void GameTimer::update()
 {
 	Timer::update();
-	while (_elapsedTimeInSeconds >= _frameCheckFrequencyInSeconds) {
-		_frameRate = 1.0f / _deltaSeconds;
+	while (_elapsedTimeInSeconds >= SecondsBetweenFPSCheck) {
+		_frameRate = SecondsBetweenFPSCheck / _deltaSeconds;
 		_elapsedTimeInSeconds -= _frameCheckFrequencyInSeconds;
 	}
 }

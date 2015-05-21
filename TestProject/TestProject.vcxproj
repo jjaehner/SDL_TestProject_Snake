@@ -90,7 +90,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Body.png" />
-    <Image Include="fuzzy_bunny.jpg" />
     <Image Include="Head.png" />
     <Image Include="Tail.png" />
   </ItemGroup>

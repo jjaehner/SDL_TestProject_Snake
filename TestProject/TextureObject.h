@@ -12,17 +12,18 @@ public:
 
 	void update(float deltaSeconds);
 	void render(SDL_Renderer* renderer);
-
-	void setPosition(Vector2D newPosition);
+	
+	virtual void setPosition(Vector2D newPosition);
 	Vector2D getPosition();
-	SDL_Rect getCollisionRect();
+	SDL_Rect getDestinationRect();
 	bool intersectsTextureObject(TextureObject* textureObject);
 
 
-private:
+protected:
 
 	SDL_Texture* _texturePtr;
 	SDL_Surface* _surfacePtr;
+	SDL_Rect _srcRect;
 	SDL_Rect _destRect;
 	bool pointIsInside(float x, float y);
 };

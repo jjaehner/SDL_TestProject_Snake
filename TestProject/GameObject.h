@@ -16,4 +16,3 @@ protected:
 
 	Vector2D _position;
 };
-

@@ -5,6 +5,7 @@ SnakeObject::SnakeObject(SDL_Renderer* renderer)
 {
 	_renderer = renderer;
 	_movementTimer = new Timer();
+	_animationTimer = new Timer();
 	createSnake();
 }
 
@@ -12,17 +13,20 @@ SnakeObject::SnakeObject(SDL_Renderer* renderer)
 SnakeObject::~SnakeObject()
 {
 	delete _movementTimer;
+	delete _animationTimer;
 	destroySnake();
 }
 
 void SnakeObject::createSnake()
 {
-	addBodyLink(3);
-	changeDirection(SOUTH);
+	addBodyLink(InitialSnakeBodySize);
+	changeDirection(MovementDirection::SOUTH);
 	_movementTimer->start();
-	_gridLocationX = 0;
-	_gridLocationY = 0;
+	_animationTimer->start();
+	_gridLocationX = InitialGridSpawnX;
+	_gridLocationY = InitialGridSpawnY;
 	_bodyPartAddDelay = 0;
+	_currentAnimationFrame = 0;
 }
 
 void SnakeObject::destroySnake()
@@ -44,58 +48,59 @@ void SnakeObject::destroySnake()
 void SnakeObject::update(float deltaSeconds)
 {
 	_movementTimer->update();
+	_animationTimer->update();
 
-	if (_movementTimer->getElapsedTimeInSeconds() > 1.0f / 2.0f)
+	if (_movementTimer->getElapsedTimeInSeconds() > MovementDelayInSeconds)
 	{
-		if (_bodyObjects[0]->getCurrentDirection() == NORTH &&
-			_gridLocationY == 0)
+		if (_bodyObjects[SnakeHeadIndex]->getCurrentDirection() == MovementDirection::NORTH &&
+			_gridLocationY == TopScreenGridWall)
 		{
-			_bodyObjects[0]->changeDirection(STUCK);
+			_bodyObjects[SnakeHeadIndex]->changeDirection(MovementDirection::STUCK);
 		}
-		else if (_bodyObjects[0]->getCurrentDirection() == SOUTH &&
-			_gridLocationY == 9)
+		else if (_bodyObjects[SnakeHeadIndex]->getCurrentDirection() == MovementDirection::SOUTH &&
+			_gridLocationY == BottomScreenGridWall)
 		{
-			_bodyObjects[0]->changeDirection(STUCK);
+			_bodyObjects[SnakeHeadIndex]->changeDirection(MovementDirection::STUCK);
 		}
-		else if (_bodyObjects[0]->getCurrentDirection() == WEST &&
-			_gridLocationX == 0)
+		else if (_bodyObjects[SnakeHeadIndex]->getCurrentDirection() == MovementDirection::WEST &&
+			_gridLocationX == LeftScreenGridWall)
 		{
-			_bodyObjects[0]->changeDirection(STUCK);
+			_bodyObjects[SnakeHeadIndex]->changeDirection(MovementDirection::STUCK);
 		}
-		else if (_bodyObjects[0]->getCurrentDirection() == EAST &&
-			_gridLocationX == 9)
+		else if (_bodyObjects[SnakeHeadIndex]->getCurrentDirection() == MovementDirection::EAST &&
+			_gridLocationX == RightScreenGridWall)
 		{
-			_bodyObjects[0]->changeDirection(STUCK);
+			_bodyObjects[SnakeHeadIndex]->changeDirection(MovementDirection::STUCK);
 		}
 
-		if (_bodyObjects[0]->getCurrentDirection() != STUCK)
+		if (_bodyObjects[SnakeHeadIndex]->getCurrentDirection() != MovementDirection::STUCK)
 		{
 			for (int i = 0; i < _bodyObjects.size(); i++)
 			{
-				_bodyObjects[i]->update(deltaSeconds);
+				_bodyObjects[i]->calculatePosition(deltaSeconds);
 			}
 			_bodyPartAddDelay++;
-			if (_bodyPartAddDelay >= 10)
+			if (_bodyPartAddDelay >= AddBodyLinkAfterMoveCounterMax)
 			{
-				addBodyLink(1);
-				_bodyObjects[_bodyObjects.size() - 1]->update(deltaSeconds);
+				addBodyLink(IncrimentSnakeBodySize);
+				_bodyObjects[_bodyObjects.size() - 1]->calculatePosition(deltaSeconds);
 				_bodyPartAddDelay = 0;
 			}
 		}
 
-		if (_bodyObjects[0]->getCurrentDirection() == NORTH)
+		if (_bodyObjects[SnakeHeadIndex]->getCurrentDirection() == MovementDirection::NORTH)
 		{
 			_gridLocationY -= 1;
 		}
-		else if (_bodyObjects[0]->getCurrentDirection() == SOUTH)
+		else if (_bodyObjects[SnakeHeadIndex]->getCurrentDirection() == MovementDirection::SOUTH)
 		{
 			_gridLocationY += 1;
 		}
-		else if (_bodyObjects[0]->getCurrentDirection() == WEST)
+		else if (_bodyObjects[SnakeHeadIndex]->getCurrentDirection() == MovementDirection::WEST)
 		{
 			_gridLocationX -= 1;
 		}
-		else if (_bodyObjects[0]->getCurrentDirection() == EAST)
+		else if (_bodyObjects[SnakeHeadIndex]->getCurrentDirection() == MovementDirection::EAST)
 		{
 			_gridLocationX += 1;
 		}
@@ -104,8 +109,8 @@ void SnakeObject::update(float deltaSeconds)
 
 		for (int i = 1; i < _bodyObjects.size(); i++)
 		{
-			if (_bodyObjects[0]->intersectsTextureObject(_bodyObjects[i]) &&
-				_bodyObjects[i]->getHasMovedFromSpawn() &&
+			if (_bodyObjects[i]->getHasMovedFromSpawn() &&
+				_bodyObjects[SnakeHeadIndex]->intersectsTextureObject(_bodyObjects[i]) &&
 				!gameOver)
 			{
 				gameOver = true;
@@ -121,6 +126,21 @@ void SnakeObject::update(float deltaSeconds)
 
 		_movementTimer->reset();
 	}
+	
+	if (_animationTimer->getElapsedTimeInSeconds() > 1.0f / 60.0f)
+	{
+		_currentAnimationFrame++;
+		if (_currentAnimationFrame == 6 * 6)
+		{
+			_currentAnimationFrame = 0;
+		}
+		_animationTimer->reset();
+	}
+
+	for (int i = 0; i < _bodyObjects.size(); i++)
+	{
+		_bodyObjects[i]->calculateAnimation(deltaSeconds, _currentAnimationFrame);
+	}
 }
 
 void SnakeObject::render()
@@ -133,14 +153,6 @@ void SnakeObject::render()
 
 void SnakeObject::addBodyLink(Uint32 linkCount)
 {
-	if (linkCount < 1)
-	{
-		return;
-	}
-	if (linkCount > 20)
-	{
-		linkCount = 20;
-	}
 	if (_bodyObjects.size() == 0)
 	{
 		_bodyObjects.push_back(new SnakeBodyPiece(nullptr, 0, "Head.png", _renderer));
@@ -156,6 +168,6 @@ void SnakeObject::changeDirection(MovementDirection movementDirection)
 {
 	if (_bodyObjects.size() > 0 && _bodyObjects[0] != nullptr)
 	{
-		_bodyObjects[0]->changeDirection(movementDirection);
+		_bodyObjects[SnakeHeadIndex]->changeDirection(movementDirection);
 	}
 }
