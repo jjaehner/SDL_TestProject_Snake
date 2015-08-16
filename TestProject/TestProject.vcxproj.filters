@@ -39,17 +39,9 @@
     <ClCompile Include="Pickup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Body.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Head.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Tail.png">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <ClCompile Include="PickupController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Font Include="arial.ttf">
@@ -105,5 +97,13 @@
     <ClInclude Include="Pickup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PickupController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="SnakeTiles.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

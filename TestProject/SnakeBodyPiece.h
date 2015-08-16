@@ -5,24 +5,22 @@
 #include <string.h>
 #include <iostream>
 
-enum class MovementDirection {
-	FOLLOWING = 0,
-	NORTH = 1,
-	SOUTH = 2,
-	EAST = 3,
-	WEST = 4,
-	STUCK = 5
-};
+#define SnakeHeadImageIndex 0
+#define SnakeStraightBodyImageIndex 1
+#define SnakeClockWiseBodyTurnImageIndex 2
+#define SnakeCounterClockWiseBodyTurnImageIndex 3
+#define SnakeTailImageIndex 4
 
-#define InitialGridSpawnX 0
-#define InitialGridSpawnY 0
+#define GridRotationZero 0
+#define GridRotationNinety 1
+#define GridRotationOneEighty 2
+#define GridRotationTwoSeventy 3
 
 #define SnakePixelSize 64
-#define InitialSnakeBodySize 1
+#define InitialSnakeBodySize 3
 #define IncrimentSnakeBodySize 1
-#define AddBodyLinkAfterMoveCounterMax 3
 
-#define MovementSpeed 66.0f
+#define MovementSpeed 64.0f
 #define MovementDelayInSeconds 0.5f
 #define TimePerAnimationFrameInSeconds 0.5f
 
@@ -36,32 +34,33 @@ enum class MovementDirection {
 class SnakeBodyPiece : public TextureObject
 {
 public:
-	SnakeBodyPiece(SnakeBodyPiece* parentBodyPiece, Uint32 bodyIndex, std::string path, SDL_Renderer* renderer);
+	SnakeBodyPiece(SnakeBodyPiece* parentBodyPiece, Uint32 bodyIndex, std::string path, SDL_Renderer* renderer, Vector2D position, Vector2D gridLocation);
 	~SnakeBodyPiece();
 
 	Vector2D getNextMovePosition();
 	void setSourceRect(int x, int y, int w, int h);
 	void setSourceRect(SDL_Rect srcRect);
 	void setPosition(Vector2D position);
-	void setDestinationRect(int x, int y, int w, int h);
-	void setDestinationRect(SDL_Rect destRect);	
 	void update(float deltaSeconds);
-	void calculatePosition(float deltaSeconds);
-	void calculateAnimation(float deltaSeconds, Uint32 currentAnimationFrame);
-	void render(SDL_Renderer* renderer);
+	void calculatePosition(bool addMovement);
+	void calculateAnimation(Uint32 currentAnimationFrame, Uint32 totalBodyPieces);
+	void render();
 	void changeDirection(MovementDirection movementDirection);
 	void setLastPosition(Vector2D lastPosition);
 	Vector2D getLastPosition();
 	bool getHasMovedFromSpawn();
+	void hasBecomeUnstuck();
+	void hasBecomeStuck();
+	bool isStuck();
 	MovementDirection getCurrentDirection();
 
 private:
 
-	Vector2D _lastPosition;
+	Vector2D _lastPosition; //anchor point of where the object was, not sprite position
 	MovementDirection _currentDirection;
 	SnakeBodyPiece* _parentBodyPiece;
 	Uint32 _bodyIndex;
 	bool _hasMovedFromSpawn;
-	double _renderAngle;
+	bool _isStuck;
 };
 

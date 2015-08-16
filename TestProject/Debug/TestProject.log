@@ -1,4 +1,4 @@
-﻿Build started 5/21/2015 9:41:49 AM.
+﻿Build started 8/16/2015 2:31:46 PM.
      1>Project "F:\Android Workspace\GitHub\SDL_TestProject_Snake\TestProject\TestProject.vcxproj" on node 2 (Build target(s)).
      1>Link:
          TestProject.vcxproj -> F:\Android Workspace\GitHub\SDL_TestProject_Snake\Debug\TestProject.exe
@@ -6,4 +6,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.04
+Time Elapsed 00:00:00.03

@@ -5,9 +5,10 @@
 #include <SDL_ttf.h>
 #include <iostream>
 #include <time.h>
-#include <iostream>
 #include "GameTimer.h"
 #include "SnakeObject.h"
+#include "PickupController.h"
+
 #define _TEST_INCLUDES_H
 
 int main(int argc, char** argv)
@@ -23,17 +24,32 @@ int main(int argc, char** argv)
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP);
 	TTF_Init();
 
-	_windowPtr = SDL_CreateWindow("SDL Window", 100, 100, 660, 660, 0);
+	_windowPtr = SDL_CreateWindow("SDL Window", 100, 100, 640, 640, 0);
 	_rendererPtr = SDL_CreateRenderer(_windowPtr, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 	SDL_Rect _ttfRect = { 0, 0, 0, 0 };
 
 	SnakeObject* snakeObj = new SnakeObject(_rendererPtr);
+	PickupController* pickupController = new PickupController("SnakeTiles.png", _rendererPtr);
 
 	int frameCount = 0;
 	int currentTicks = 0;
 
 	char fpsChars[20];
+
+	SDL_GameController* controller = nullptr;
+
+	for (int i = 0; i < SDL_NumJoysticks(); i++)
+	{
+		if (SDL_IsGameController(i))
+		{
+			controller = SDL_GameControllerOpen(i);
+			if (controller)
+			{
+				break;
+			}
+		}
+	}
 
 	while (true)
 	{
@@ -43,6 +59,11 @@ int main(int argc, char** argv)
 		SDL_PollEvent(&evt);
 
 		snakeObj->update(gameTimer.getDeltaTimeInSeconds());
+		if (snakeObj->intersectsGridObject(pickupController->getPickupObject()))
+		{
+			pickupController->resetPickup(snakeObj);
+			snakeObj->gatherPickup();
+		}
 
 		if (evt.type == SDL_KEYDOWN)
 		{
@@ -72,6 +93,7 @@ int main(int argc, char** argv)
 		SDL_SetRenderDrawColor(_rendererPtr, 100, 149, 237, 255);
 		SDL_RenderClear(_rendererPtr);
 		snakeObj->render();
+		pickupController->render();
 		//SDL_RenderCopy(_rendererPtr, _bunnyTexturePtr, &_bunnyRect, nullptr);
 		//SDL_RenderCopy(_rendererPtr, _ttfTexturePtr, nullptr, nullptr);
 		SDL_RenderPresent(_rendererPtr);

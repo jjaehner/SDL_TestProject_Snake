@@ -3,13 +3,8 @@
 class Pickup : public TextureObject
 {
 public:
-	Pickup(std::string path, SDL_Renderer* renderer);
+	Pickup(std::string path, SDL_Renderer* renderer, Vector2D position, Vector2D gridLocation);
 	~Pickup();
 
-	bool intersectsObject(TextureObject textureObject);
-
 private:
-
-	bool pointIsInside(float x, float y);
 };
-

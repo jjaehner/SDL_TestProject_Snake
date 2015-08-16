@@ -1,10 +1,9 @@
 #include "GameObject.h"
 
 
-GameObject::GameObject()
+GameObject::GameObject(Vector2D position)
 {
-	_position.x = 0.0f;
-	_position.y = 0.0f;
+	_position = position;
 }
 
 

@@ -1,15 +1,17 @@
 #include "TextureObject.h"
 
 
-TextureObject::TextureObject(std::string path, SDL_Renderer* renderer)
-	: GameObject()
+TextureObject::TextureObject(std::string path, SDL_Renderer* renderer, Vector2D position, Vector2D gridLocation)
+	: GameObject(position)
 {
+	_renderer = renderer;
 	_surfacePtr = IMG_Load(path.c_str());
 	_texturePtr = SDL_CreateTextureFromSurface(renderer, _surfacePtr);
 	_destRect.x = this->_position.x;
 	_destRect.y = this->_position.y;
 	_destRect.w = _surfacePtr->w;
 	_destRect.h = _surfacePtr->h;
+	_gridLocation = gridLocation;
 }
 
 
@@ -35,14 +37,29 @@ Vector2D TextureObject::getPosition()
 	return this->_position;
 }
 
+void TextureObject::setDestinationRect(int x, int y, int w, int h)
+{
+	SDL_Rect destRect;
+	destRect.x = x;
+	destRect.y = y;
+	destRect.w = w;
+	destRect.h = h;
+	setDestinationRect(destRect);
+}
+
+void TextureObject::setDestinationRect(SDL_Rect destRect)
+{
+	_destRect = destRect;
+}
+
 SDL_Rect TextureObject::getDestinationRect()
 {
 	return _destRect;
 }
 
-void TextureObject::render(SDL_Renderer* renderer)
+void TextureObject::render()
 {
-	SDL_RenderCopy(renderer, _texturePtr, nullptr, &_destRect);
+	SDL_RenderCopy(_renderer, _texturePtr, &_srcRect, &_destRect);
 }
 
 bool TextureObject::intersectsTextureObject(TextureObject* textureObject)
@@ -101,4 +118,44 @@ bool TextureObject::pointIsInside(float x, float y)
 	}
 
 	return false;
+}
+
+bool TextureObject::intersectsGridObject(TextureObject* textureObject)
+{
+	if (_gridLocation.x == textureObject->getGridLocation().x &&
+		_gridLocation.y == textureObject->getGridLocation().y)
+	{
+		return true;
+	}
+	return false;
+}
+
+Vector2D TextureObject::getGridLocation()
+{
+	return _gridLocation;
+}
+
+void TextureObject::setGridLocation(Vector2D newGridLocation)
+{
+	_gridLocation = newGridLocation;
+}
+
+void TextureObject::updateGridLocation(MovementDirection movementDirection)
+{
+	if (movementDirection == MovementDirection::NORTH)
+	{
+		_gridLocation.y -= 1.0f;
+	}
+	else if (movementDirection == MovementDirection::SOUTH)
+	{
+		_gridLocation.y += 1.0f;
+	}
+	else if (movementDirection == MovementDirection::WEST)
+	{
+		_gridLocation.x -= 1.0f;
+	}
+	else if (movementDirection == MovementDirection::EAST)
+	{
+		_gridLocation.x += 1.0f;
+	}
 }

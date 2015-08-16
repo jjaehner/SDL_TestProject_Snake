@@ -3,8 +3,12 @@ f:\android workspace\github\sdl_testproject_snake\testproject\debug\vc120.idb
 f:\android workspace\github\sdl_testproject_snake\testproject\debug\gameobject.obj
 f:\android workspace\github\sdl_testproject_snake\testproject\debug\gametimer.obj
 f:\android workspace\github\sdl_testproject_snake\testproject\debug\main.obj
+f:\android workspace\github\sdl_testproject_snake\testproject\debug\pickup.obj
+f:\android workspace\github\sdl_testproject_snake\testproject\debug\pickupcontroller.obj
+f:\android workspace\github\sdl_testproject_snake\testproject\debug\snakebodypiece.obj
 f:\android workspace\github\sdl_testproject_snake\testproject\debug\snakeobject.obj
 f:\android workspace\github\sdl_testproject_snake\testproject\debug\textureobject.obj
+f:\android workspace\github\sdl_testproject_snake\testproject\debug\timer.obj
 f:\android workspace\github\sdl_testproject_snake\debug\testproject.ilk
 f:\android workspace\github\sdl_testproject_snake\debug\testproject.exe
 f:\android workspace\github\sdl_testproject_snake\debug\testproject.pdb

@@ -1,19 +1,18 @@
 #include "SnakeBodyPiece.h"
 
 
-SnakeBodyPiece::SnakeBodyPiece(SnakeBodyPiece* parentBodyPiece, Uint32 bodyIndex, std::string path, SDL_Renderer* renderer)
-	: TextureObject(path, renderer)
+SnakeBodyPiece::SnakeBodyPiece(SnakeBodyPiece* parentBodyPiece, Uint32 bodyIndex, std::string path, SDL_Renderer* renderer, Vector2D position, Vector2D gridLocation)
+	: TextureObject(path, renderer, position, gridLocation)
 {
 	_parentBodyPiece = parentBodyPiece;
 	_bodyIndex = bodyIndex;
 	_hasMovedFromSpawn = false;
-	_renderAngle = 0.0;
 	setSourceRect(0, 0, 64, 64);
+	setPosition(position);
+	_isStuck = false;
 	if (_parentBodyPiece != nullptr)
 	{
-		setPosition(_parentBodyPiece->getPosition());
 		setLastPosition(getPosition());
-		changeDirection(MovementDirection::FOLLOWING);
 	}
 }
 
@@ -61,133 +60,272 @@ void SnakeBodyPiece::setPosition(Vector2D position)
 	setDestinationRect(position.x, position.y, SnakePixelSize, SnakePixelSize);
 }
 
-void SnakeBodyPiece::setDestinationRect(int x, int y, int w, int h)
-{
-	SDL_Rect destRect;
-	destRect.x = x;
-	destRect.y = y;
-	destRect.w = w;
-	destRect.h = h;
-	setDestinationRect(destRect);
-}
-
-void SnakeBodyPiece::setDestinationRect(SDL_Rect destRect)
-{
-	_destRect = destRect;
-}
-
 void SnakeBodyPiece::update(float deltaSeconds)
 {
-	calculatePosition(deltaSeconds);
+	calculatePosition(false);
 	TextureObject::update(deltaSeconds);
 }
 
-void SnakeBodyPiece::calculatePosition(float deltaSeconds)
+void SnakeBodyPiece::calculatePosition(bool addMovement)
 {
 	Vector2D currentPosition;
 	Vector2D tempLastPosition = getLastPosition();
 	currentPosition = getPosition();
 	setLastPosition(currentPosition);
-	if (_parentBodyPiece != nullptr &&
-		_parentBodyPiece->getCurrentDirection() != MovementDirection::STUCK &&
-		_currentDirection == MovementDirection::FOLLOWING)
+	if (_parentBodyPiece != nullptr)
 	{
 		float xDiff = _parentBodyPiece->getPosition().x - _lastPosition.x;
 		float yDiff = _parentBodyPiece->getPosition().y - _lastPosition.y;
 		if (xDiff >= MovementSpeed || xDiff <= -MovementSpeed ||
 			yDiff >= MovementSpeed || yDiff <= -MovementSpeed)
 		{
-			currentPosition = _parentBodyPiece->getLastPosition();
-			_hasMovedFromSpawn = true;
+			if (currentPosition.x == _parentBodyPiece->getPosition().x &&
+				currentPosition.y > _parentBodyPiece->getLastPosition().y)
+			{
+				changeDirection(MovementDirection::NORTH);
+			}
+			else if (currentPosition.x == _parentBodyPiece->getLastPosition().x &&
+				currentPosition.y < _parentBodyPiece->getLastPosition().y)
+			{
+				changeDirection(MovementDirection::SOUTH);
+			}
+			if (currentPosition.x < _parentBodyPiece->getLastPosition().x &&
+				currentPosition.y == _parentBodyPiece->getLastPosition().y)
+			{
+				changeDirection(MovementDirection::EAST);
+			}
+			else if (currentPosition.x > _parentBodyPiece->getLastPosition().x &&
+				currentPosition.y == _parentBodyPiece->getLastPosition().y)
+			{
+				changeDirection(MovementDirection::WEST);
+			}			
+
+			if (addMovement)
+			{
+				currentPosition = _parentBodyPiece->getLastPosition();
+				_hasMovedFromSpawn = true;
+			}
 		}
 	}
-	else if (_currentDirection != MovementDirection::FOLLOWING &&
-		_currentDirection != MovementDirection::STUCK)
+	else
 	{
-		switch (_currentDirection)
+		if (addMovement)
 		{
-		case MovementDirection::NORTH:
-			currentPosition.y -= MovementSpeed;
-			break;
-		case MovementDirection::SOUTH:
-			currentPosition.y += MovementSpeed;
-			break;
-		case MovementDirection::EAST:
-			currentPosition.x += MovementSpeed;
-			break;
-		case MovementDirection::WEST:
-			currentPosition.x -= MovementSpeed;
-			break;
-		case MovementDirection::FOLLOWING:
-		default:
-			break;
+			switch (_currentDirection)
+			{
+				case MovementDirection::NORTH:
+					currentPosition.y -= MovementSpeed;
+					break;
+				case MovementDirection::SOUTH:
+					currentPosition.y += MovementSpeed;
+					break;
+				case MovementDirection::EAST:
+					currentPosition.x += MovementSpeed;
+					break;
+				case MovementDirection::WEST:
+					currentPosition.x -= MovementSpeed;
+					break;
+				default:
+					break;
+			}
 		}
 	}
 	setPosition(currentPosition);
 }
 
-void SnakeBodyPiece::calculateAnimation(float deltaSeconds, Uint32 currentAnimationFrame)
-{
-	if (_parentBodyPiece != nullptr &&
-		_parentBodyPiece->getCurrentDirection() != MovementDirection::STUCK &&
-		_currentDirection == MovementDirection::FOLLOWING)
+void SnakeBodyPiece::calculateAnimation(Uint32 currentAnimationFrame, Uint32 totalBodyPieces)
+{	
+	int xFrame = SnakeTailImageIndex;
+	int yFrame = 0;
+
+	if (_parentBodyPiece != nullptr)
 	{
-		float xDiff = _parentBodyPiece->getPosition().x - _lastPosition.x;
-		float yDiff = _parentBodyPiece->getPosition().y - _lastPosition.y;
-		if (xDiff >= MovementSpeed || xDiff <= -MovementSpeed ||
-			yDiff >= MovementSpeed || yDiff <= -MovementSpeed)
+		if (_parentBodyPiece->getCurrentDirection() == MovementDirection::EAST &&
+			getCurrentDirection() == MovementDirection::SOUTH)
 		{
-			if (xDiff > 0.0f)
+			if (_bodyIndex == (totalBodyPieces - 1))
 			{
-				_renderAngle = 90.0f;
+				xFrame = SnakeTailImageIndex;
 			}
-			else if (xDiff < 0.0f)
+			else
 			{
-				_renderAngle = 270.0f;
+				xFrame = SnakeCounterClockWiseBodyTurnImageIndex;
 			}
-			if (yDiff > 0.0f)
+			yFrame = GridRotationNinety;
+		}
+		else if (_parentBodyPiece->getCurrentDirection() == MovementDirection::EAST &&
+			getCurrentDirection() == MovementDirection::NORTH)
+		{
+			if (_bodyIndex == (totalBodyPieces - 1))
 			{
-				_renderAngle = 180.0f;
+				xFrame = SnakeTailImageIndex;
 			}
-			if (yDiff < 0.0f)
+			else
 			{
-				_renderAngle = 0.0f;
+				xFrame = SnakeClockWiseBodyTurnImageIndex;
 			}
+			yFrame = GridRotationNinety;
+		}
+		else if (_parentBodyPiece->getCurrentDirection() == MovementDirection::WEST &&
+			getCurrentDirection() == MovementDirection::NORTH)
+		{
+			if (_bodyIndex == (totalBodyPieces - 1))
+			{
+				xFrame = SnakeTailImageIndex;
+			}
+			else
+			{
+				xFrame = SnakeCounterClockWiseBodyTurnImageIndex;
+			}
+			yFrame = GridRotationTwoSeventy;
+		}
+		else if (_parentBodyPiece->getCurrentDirection() == MovementDirection::WEST &&
+			getCurrentDirection() == MovementDirection::SOUTH)
+		{
+			if (_bodyIndex == (totalBodyPieces - 1))
+			{
+				xFrame = SnakeTailImageIndex;
+			}
+			else
+			{
+				xFrame = SnakeClockWiseBodyTurnImageIndex;
+			}
+			yFrame = GridRotationTwoSeventy;
+		}
+		else if (_parentBodyPiece->getCurrentDirection() == MovementDirection::SOUTH &&
+			getCurrentDirection() == MovementDirection::EAST)
+		{
+			if (_bodyIndex == (totalBodyPieces - 1))
+			{
+				xFrame = SnakeTailImageIndex;
+			}
+			else
+			{
+				xFrame = SnakeClockWiseBodyTurnImageIndex;
+			}
+			yFrame = GridRotationZero;
+		}
+		else if (_parentBodyPiece->getCurrentDirection() == MovementDirection::SOUTH &&
+			getCurrentDirection() == MovementDirection::WEST)
+		{
+			if (_bodyIndex == (totalBodyPieces - 1))
+			{
+				xFrame = SnakeTailImageIndex;
+			}
+			else
+			{
+				xFrame = SnakeCounterClockWiseBodyTurnImageIndex;
+			}
+			yFrame = GridRotationZero;
+		}
+		else if (_parentBodyPiece->getCurrentDirection() == MovementDirection::NORTH &&
+			getCurrentDirection() == MovementDirection::EAST)
+		{
+			if (_bodyIndex == (totalBodyPieces - 1))
+			{
+				xFrame = SnakeTailImageIndex;
+			}
+			else
+			{
+				xFrame = SnakeCounterClockWiseBodyTurnImageIndex;
+			}
+			yFrame = GridRotationOneEighty;
+		}
+		else if (_parentBodyPiece->getCurrentDirection() == MovementDirection::NORTH &&
+			getCurrentDirection() == MovementDirection::WEST)
+		{
+			if (_bodyIndex == (totalBodyPieces - 1))
+			{
+				xFrame = SnakeTailImageIndex;
+			}
+			else
+			{
+				xFrame = SnakeClockWiseBodyTurnImageIndex;
+			}
+			yFrame = GridRotationOneEighty;
+		}
+		else if(_parentBodyPiece->getCurrentDirection() == MovementDirection::NORTH &&
+			getCurrentDirection() == MovementDirection::NORTH)
+		{
+			if (_bodyIndex == (totalBodyPieces - 1))
+			{
+				xFrame = SnakeTailImageIndex;
+			}
+			else
+			{
+				xFrame = SnakeStraightBodyImageIndex;
+			}
+			yFrame = GridRotationOneEighty;
+		}
+		else if (_parentBodyPiece->getCurrentDirection() == MovementDirection::SOUTH &&
+			getCurrentDirection() == MovementDirection::SOUTH)
+		{
+			if (_bodyIndex == (totalBodyPieces - 1))
+			{
+				xFrame = SnakeTailImageIndex;
+			}
+			else
+			{
+				xFrame = SnakeStraightBodyImageIndex;
+			}
+			yFrame = GridRotationZero;
+		}
+		else if (_parentBodyPiece->getCurrentDirection() == MovementDirection::EAST &&
+			getCurrentDirection() == MovementDirection::EAST)
+		{
+			if (_bodyIndex == (totalBodyPieces - 1))
+			{
+				xFrame = SnakeTailImageIndex;
+			}
+			else
+			{
+				xFrame = SnakeStraightBodyImageIndex;
+			}
+			yFrame = GridRotationNinety;
+		}
+		else if (_parentBodyPiece->getCurrentDirection() == MovementDirection::WEST &&
+			getCurrentDirection() == MovementDirection::WEST)
+		{
+			if (_bodyIndex == (totalBodyPieces - 1))
+			{
+				xFrame = SnakeTailImageIndex;
+			}
+			else
+			{
+				xFrame = SnakeStraightBodyImageIndex;
+			}
+			yFrame = GridRotationTwoSeventy;
 		}
 	}
-	else if (_currentDirection != MovementDirection::FOLLOWING &&
-		_currentDirection != MovementDirection::STUCK)
+	else
 	{
+		xFrame = SnakeHeadImageIndex;
 		switch (_currentDirection)
 		{
 		case MovementDirection::NORTH:
-			_renderAngle = 0.0;
+			yFrame = 2;
 			break;
 		case MovementDirection::SOUTH:
-			_renderAngle = 180.0;
+			yFrame = 0;
 			break;
 		case MovementDirection::EAST:
-			_renderAngle = 90.0;
+			yFrame = 1;
 			break;
 		case MovementDirection::WEST:
-			_renderAngle = 270.0;
+			yFrame = 3;
 			break;
-		case MovementDirection::FOLLOWING:
 		default:
 			break;
 		}
 	}
 
-	int xFrame = currentAnimationFrame / 6;
-	int yFrame = currentAnimationFrame % 6;
-
 	setSourceRect(xFrame * SnakePixelSize, yFrame * SnakePixelSize, SnakePixelSize, SnakePixelSize);
 	setDestinationRect(getPosition().x, getPosition().y, SnakePixelSize, SnakePixelSize);
 }
 
-void SnakeBodyPiece::render(SDL_Renderer* renderer)
+void SnakeBodyPiece::render()
 {
-	SDL_RenderCopyEx(renderer, _texturePtr, &_srcRect, &_destRect, _renderAngle, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(_renderer, _texturePtr, &_srcRect, &_destRect, 0.0f, NULL, SDL_FLIP_NONE);
 }
 
 void SnakeBodyPiece::changeDirection(MovementDirection movementDirection)
@@ -209,6 +347,21 @@ Vector2D SnakeBodyPiece::getLastPosition()
 bool SnakeBodyPiece::getHasMovedFromSpawn()
 {
 	return _hasMovedFromSpawn;
+}
+
+void SnakeBodyPiece::hasBecomeUnstuck()
+{
+	_isStuck = false;
+}
+
+void SnakeBodyPiece::hasBecomeStuck()
+{
+	_isStuck = true;
+}
+
+bool SnakeBodyPiece::isStuck()
+{
+	return _isStuck;
 }
 
 MovementDirection SnakeBodyPiece::getCurrentDirection()

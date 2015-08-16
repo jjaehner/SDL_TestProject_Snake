@@ -83,15 +83,14 @@
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pickup.cpp" />
+    <ClCompile Include="PickupController.cpp" />
     <ClCompile Include="SnakeBodyPiece.cpp" />
     <ClCompile Include="SnakeObject.cpp" />
     <ClCompile Include="TextureObject.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Body.png" />
-    <Image Include="Head.png" />
-    <Image Include="Tail.png" />
+    <Image Include="SnakeTiles.png" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="arial.ttf" />
@@ -109,6 +108,7 @@
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="MathUtils.h" />
     <ClInclude Include="Pickup.h" />
+    <ClInclude Include="PickupController.h" />
     <ClInclude Include="SnakeBodyPiece.h" />
     <ClInclude Include="SnakeObject.h" />
     <ClInclude Include="TextureObject.h" />

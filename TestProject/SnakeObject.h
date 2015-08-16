@@ -4,6 +4,9 @@
 #include <SDL.h>
 #include <vector>
 
+#define InitialGridSpawnX 3
+#define InitialGridSpawnY 3
+
 class SnakeObject
 {
 public:
@@ -12,18 +15,21 @@ public:
 	void createSnake();
 	void destroySnake();
 	void update(float deltaSeconds);
+	void animate();
 	void render();
+	void gatherPickup();
 	void addBodyLink(Uint32 linkCount);
 	void changeDirection(MovementDirection movementDirection);
+	bool intersectsGridObject(TextureObject* obj);
+	std::vector<Vector2D> getSnakeBodyPiecesGridIndex();
 
 private:
 
+	bool _initialSnakeCreated;
 	std::vector<SnakeBodyPiece*> _bodyObjects;
 	Timer* _movementTimer;
 	Timer* _animationTimer;
 	SDL_Renderer* _renderer;
-	Uint32 _gridLocationX;
-	Uint32 _gridLocationY;
 	Uint32 _currentAnimationFrame;
-	Uint32 _bodyPartAddDelay = 0;
+	float _decrementalMovementDelay;
 };
